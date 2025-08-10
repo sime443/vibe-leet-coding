@@ -17,7 +17,13 @@ Players explore large maps, loot better gear, and fight each other to survive an
   - `B` = Body
   - `L` = Legs
   - `A` = Hands
-  - `W` = Weapon
+- `W` = Weapon
+
+## Inventory
+- Each gear slot maintains **5 inventory blocks** for spare equipment of that type.
+- Players have an additional **5-slot backpack** for miscellaneous items.
+- Items can be **equipped**, **stored**, or **dropped** back into the world.
+- Dropped items have a **5 second pickup delay** before they can be collected again.
 
 ## Gear Quality System
 Example color coding:
