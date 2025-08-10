@@ -30,7 +30,7 @@ func _on_body_entered(body: Node) -> void:
     if body.has_method("pickup_item"):
         body.pickup_item(self)
 
-func _create_texture(color: Color):
+func _create_texture(color: Color) -> Texture2D:
     var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
     img.fill(color)
     return ImageTexture.create_from_image(img)
