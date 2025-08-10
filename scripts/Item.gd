@@ -12,8 +12,8 @@ func _ready():
     add_child(sprite)
     var label = Label.new()
     label.text = slot
-    label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    label.horizontal_alignment = HorizontalAlignment.CENTER
+    label.vertical_alignment = VerticalAlignment.CENTER
     label.position = Vector2(-8, -8)
     label.size = Vector2(16, 16)
     add_child(label)
