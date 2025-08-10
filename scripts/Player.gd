@@ -1,7 +1,7 @@
-extends KinematicBody2D
+extends CharacterBody2D
 
-export var speed := 100
-var BulletScene = preload("res://scenes/Bullet.tscn")
+@export var speed: int = 100
+var BulletScene: PackedScene = preload("res://scenes/Bullet.tscn")
 
 const SLOT_OFFSETS = {
     "H": Vector2(0, -16),
@@ -21,7 +21,7 @@ var backpack := []
 
 func _ready():
     for slot in SLOT_OFFSETS.keys():
-        var sprite = Sprite.new()
+        var sprite = Sprite2D.new()
         sprite.texture = _create_texture(Color(0.5, 0.5, 0.5))
         sprite.position = SLOT_OFFSETS[slot]
         sprite.centered = true
@@ -50,7 +50,8 @@ func pickup_item(item):
 
 func equip_from_inventory(slot, index):
     if inventory.has(slot) and index >= 0 and index < inventory[slot].size():
-        var data = inventory[slot].remove(index)
+        var data = inventory[slot][index]
+        inventory[slot].remove_at(index)
         if equipped_items[slot] != null:
             _store_or_drop(equipped_items[slot])
         _equip_data(data)
@@ -59,7 +60,7 @@ func equip_from_backpack(index, slot):
     if index >= 0 and index < backpack.size():
         var data = backpack[index]
         if data.slot == slot:
-            backpack.remove(index)
+            backpack.remove_at(index)
             if equipped_items[slot] != null:
                 _store_or_drop(equipped_items[slot])
             _equip_data(data)
@@ -73,12 +74,14 @@ func drop_equipped(slot):
 
 func drop_from_inventory(slot, index):
     if inventory.has(slot) and index >= 0 and index < inventory[slot].size():
-        var data = inventory[slot].remove(index)
+        var data = inventory[slot][index]
+        inventory[slot].remove_at(index)
         _drop_data(data)
 
 func drop_from_backpack(index):
     if index >= 0 and index < backpack.size():
-        var data = backpack.remove(index)
+        var data = backpack[index]
+        backpack.remove_at(index)
         _drop_data(data)
 
 func _store_or_drop(data):
@@ -96,11 +99,11 @@ func _equip_data(data):
     equipment_sprites[slot].texture = _create_texture(data.color)
 
 func _drop_data(data):
-    var scene = preload("res://scenes/Item.tscn")
-    var item = scene.instance()
+    var scene: PackedScene = preload("res://scenes/Item.tscn")
+    var item = scene.instantiate()
     item.slot = data.slot
     item.color = data.color
-    item.drop_time = OS.get_ticks_msec()
+    item.drop_time = Time.get_ticks_msec()
     item.position = global_position
     get_parent().add_child(item)
 
@@ -111,20 +114,18 @@ func _physics_process(delta):
     )
     if input_vector.length() > 0:
         input_vector = input_vector.normalized()
-    move_and_slide(input_vector * speed)
+    velocity = input_vector * speed
+    move_and_slide()
     if Input.is_action_just_pressed("shoot"):
         shoot()
 
 func shoot():
-    var bullet = BulletScene.instance()
+    var bullet = BulletScene.instantiate()
     bullet.position = global_position
     bullet.direction = (get_global_mouse_position() - global_position).normalized()
     get_parent().add_child(bullet)
 
 func _create_texture(color: Color):
-    var img = Image.new()
-    img.create(16, 16, false, Image.FORMAT_RGBA8)
+    var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
     img.fill(color)
-    var tex = ImageTexture.new()
-    tex.create_from_image(img)
-    return tex
+    return ImageTexture.create_from_image(img)

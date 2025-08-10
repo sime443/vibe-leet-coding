@@ -1,11 +1,11 @@
 extends Area2D
 
-export var speed := 400
-var direction := Vector2.ZERO
-var lifespan := 2.0
+@export var speed: float = 400.0
+var direction: Vector2 = Vector2.ZERO
+var lifespan: float = 2.0
 
 func _ready():
-    var sprite = Sprite.new()
+    var sprite = Sprite2D.new()
     sprite.texture = _create_texture(Color(1, 1, 0))
     sprite.centered = true
     add_child(sprite)
@@ -22,9 +22,6 @@ func _physics_process(delta):
         queue_free()
 
 func _create_texture(color: Color):
-    var img = Image.new()
-    img.create(8, 8, false, Image.FORMAT_RGBA8)
+    var img = Image.create(8, 8, false, Image.FORMAT_RGBA8)
     img.fill(color)
-    var tex = ImageTexture.new()
-    tex.create_from_image(img)
-    return tex
+    return ImageTexture.create_from_image(img)
