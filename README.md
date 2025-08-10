@@ -64,7 +64,7 @@ Gear stats affect:
 - Lobby system with matchmaking.
 
 ## Technical Notes
-- **Engine:** Godot or Unity 2D
+- **Engine:** Godot 4.4.1
 - **Camera:** Top-down
 - **Networking:** Real-time server-authoritative multiplayer
 - **Assets:** Simple block sprites with color variants and letter markings
