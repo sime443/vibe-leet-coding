@@ -12,8 +12,10 @@ func _ready():
     add_child(sprite)
     var label = Label.new()
     label.text = slot
+
     label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
     label.position = Vector2(-8, -8)
     label.size = Vector2(16, 16)
     add_child(label)
@@ -22,16 +24,16 @@ func _ready():
     shape.extents = Vector2(8, 8)
     collision.shape = shape
     add_child(collision)
+
     connect("body_entered", Callable(self, "_on_body_entered"))
 
-func _on_body_entered(body):
-    if OS.get_ticks_msec() - drop_time < int(PICKUP_DELAY * 1000):
+func _on_body_entered(body: Node) -> void:
+    if Time.get_ticks_msec() - drop_time < int(PICKUP_DELAY * 1000):
         return
     if body.has_method("pickup_item"):
         body.pickup_item(self)
 
-func _create_texture(color: Color):
-    var img = Image.new()
-    img.create(16, 16, false, Image.FORMAT_RGBA8)
+func _create_texture(color: Color) -> Texture2D:
+    var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
     img.fill(color)
     return ImageTexture.create_from_image(img)
