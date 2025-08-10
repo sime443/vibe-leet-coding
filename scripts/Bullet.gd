@@ -24,6 +24,4 @@ func _physics_process(delta):
 func _create_texture(color: Color):
     var img = Image.create(8, 8, false, Image.FORMAT_RGBA8)
     img.fill(color)
-    var tex = ImageTexture.new()
-    tex.set_image(img)
-    return tex
+    return ImageTexture.create_from_image(img)

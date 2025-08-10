@@ -33,6 +33,4 @@ func _on_body_entered(body: Node) -> void:
 func _create_texture(color: Color):
     var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
     img.fill(color)
-    var tex = ImageTexture.new()
-    tex.set_image(img)
-    return tex
+    return ImageTexture.create_from_image(img)
