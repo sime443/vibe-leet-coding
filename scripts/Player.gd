@@ -2,16 +2,34 @@ extends KinematicBody2D
 
 export var speed := 100
 
+const SLOT_OFFSETS = {
+    "H": Vector2(0, -16),
+    "B": Vector2(0, 0),
+    "L": Vector2(0, 16),
+    "A": Vector2(-16, 0),
+    "W": Vector2(16, 0)
+}
+
+var equipment := {}
+
 func _ready():
-    var sprite = Sprite.new()
-    sprite.texture = _create_texture(Color(1, 0, 0))
-    sprite.centered = true
-    add_child(sprite)
+    for slot in SLOT_OFFSETS.keys():
+        var sprite = Sprite.new()
+        sprite.texture = _create_texture(Color(0.5, 0.5, 0.5))
+        sprite.position = SLOT_OFFSETS[slot]
+        sprite.centered = true
+        add_child(sprite)
+        equipment[slot] = sprite
     var collision = CollisionShape2D.new()
     var shape = RectangleShape2D.new()
     shape.extents = Vector2(8, 8)
     collision.shape = shape
     add_child(collision)
+
+func equip_item(item):
+    var slot = item.slot
+    if equipment.has(slot):
+        equipment[slot].texture = _create_texture(item.color)
 
 func _physics_process(delta):
     var input_vector = Vector2(

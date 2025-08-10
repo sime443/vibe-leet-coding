@@ -4,10 +4,21 @@ const MAP_WIDTH = 128
 const MAP_HEIGHT = 128
 const TILE_SIZE = 16
 
+const ITEM_SCENE = preload("res://scenes/Item.tscn")
+const SLOTS = ["H", "B", "L", "A", "W"]
+const QUALITY_COLORS = [
+    Color(0.5, 0.5, 0.5), # Grey
+    Color(0, 1, 0),       # Green
+    Color(0, 0, 1),       # Blue
+    Color(0.5, 0, 0.5),   # Purple
+    Color(1, 0.84, 0)     # Gold
+]
+
 func _ready():
     randomize()
     tile_set = _create_tile_set()
     _generate_map()
+    _spawn_items()
 
 func _create_tile_set():
     var ts = TileSet.new()
@@ -43,3 +54,14 @@ func _generate_map():
             if n <= 0.0:
                 tile_id = 1
             set_cellv(Vector2(x, y), tile_id)
+
+func _spawn_items():
+    for slot in SLOTS:
+        var item = ITEM_SCENE.instance()
+        item.slot = slot
+        item.color = QUALITY_COLORS[randi() % QUALITY_COLORS.size()]
+        item.position = Vector2(
+            randi() % (MAP_WIDTH * TILE_SIZE),
+            randi() % (MAP_HEIGHT * TILE_SIZE)
+        )
+        add_child(item)
