@@ -16,7 +16,7 @@ const QUALITY_COLORS := [
 
 func _ready():
     randomize()
-    tile_set = _create_tile_set()
+    tileset = _create_tile_set()
     _generate_map()
     _spawn_items()
 
