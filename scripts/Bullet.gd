@@ -22,7 +22,8 @@ func _physics_process(delta):
         queue_free()
 
 func _create_texture(color: Color):
-    var img = Image.new()
-    img.create(8, 8, false, Image.FORMAT_RGBA8)
+    var img = Image.create(8, 8, false, Image.FORMAT_RGBA8)
     img.fill(color)
-    return ImageTexture.create_from_image(img)
+    var tex = ImageTexture.new()
+    tex.set_image(img)
+    return tex

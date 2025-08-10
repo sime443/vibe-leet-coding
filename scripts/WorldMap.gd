@@ -16,7 +16,7 @@ const QUALITY_COLORS := [
 
 func _ready():
     randomize()
-    tileset = _create_tile_set()
+    tile_set = _create_tile_set()
     _generate_map()
     _spawn_items()
 
@@ -33,17 +33,18 @@ func _create_tile_set():
     return ts
 
 func _create_texture(color):
-    var img = Image.new()
-    img.create(TILE_SIZE, TILE_SIZE, false, Image.FORMAT_RGBA8)
+    var img = Image.create(TILE_SIZE, TILE_SIZE, false, Image.FORMAT_RGBA8)
     img.fill(color)
-    return ImageTexture.create_from_image(img)
+    var tex = ImageTexture.new()
+    tex.set_image(img)
+    return tex
 
 func _generate_map():
-    var noise = OpenSimplexNoise.new()
+    var noise = FastNoiseLite.new()
     noise.seed = randi()
-    noise.octaves = 4
-    noise.period = 20.0
-    noise.persistence = 0.8
+    noise.frequency = 1.0 / 20.0
+    noise.fractal_octaves = 4
+    noise.fractal_gain = 0.8
 
     for x in range(MAP_WIDTH):
         for y in range(MAP_HEIGHT):

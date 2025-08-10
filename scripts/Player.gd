@@ -50,7 +50,8 @@ func pickup_item(item):
 
 func equip_from_inventory(slot, index):
     if inventory.has(slot) and index >= 0 and index < inventory[slot].size():
-        var data = inventory[slot].remove(index)
+        var data = inventory[slot][index]
+        inventory[slot].remove_at(index)
         if equipped_items[slot] != null:
             _store_or_drop(equipped_items[slot])
         _equip_data(data)
@@ -59,7 +60,7 @@ func equip_from_backpack(index, slot):
     if index >= 0 and index < backpack.size():
         var data = backpack[index]
         if data.slot == slot:
-            backpack.remove(index)
+            backpack.remove_at(index)
             if equipped_items[slot] != null:
                 _store_or_drop(equipped_items[slot])
             _equip_data(data)
@@ -73,12 +74,14 @@ func drop_equipped(slot):
 
 func drop_from_inventory(slot, index):
     if inventory.has(slot) and index >= 0 and index < inventory[slot].size():
-        var data = inventory[slot].remove(index)
+        var data = inventory[slot][index]
+        inventory[slot].remove_at(index)
         _drop_data(data)
 
 func drop_from_backpack(index):
     if index >= 0 and index < backpack.size():
-        var data = backpack.remove(index)
+        var data = backpack[index]
+        backpack.remove_at(index)
         _drop_data(data)
 
 func _store_or_drop(data):
@@ -100,7 +103,7 @@ func _drop_data(data):
     var item = scene.instantiate()
     item.slot = data.slot
     item.color = data.color
-    item.drop_time = OS.get_ticks_msec()
+    item.drop_time = Time.get_ticks_msec()
     item.position = global_position
     get_parent().add_child(item)
 
@@ -123,7 +126,8 @@ func shoot():
     get_parent().add_child(bullet)
 
 func _create_texture(color: Color):
-    var img = Image.new()
-    img.create(16, 16, false, Image.FORMAT_RGBA8)
+    var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
     img.fill(color)
-    return ImageTexture.create_from_image(img)
+    var tex = ImageTexture.new()
+    tex.set_image(img)
+    return tex
