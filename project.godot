@@ -1,11 +1,28 @@
 ; Engine configuration file.
-; It's best to edit the project settings by opening the project in the editor.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=4
 
 [application]
+
 config/name="Codex Looter Shooter"
 run/main_scene="res://scenes/WorldMap.tscn"
 
+[input]
+
+shoot={
+"deadzone": 0.5,
+"events": [ {
+"button_index": 1,
+"type": "InputEventMouseButton"
+} ]
+}
+
 [rendering]
+
 quality/driver/driver_name="GLES2"

@@ -1,6 +1,7 @@
 extends KinematicBody2D
 
 export var speed := 100
+var BulletScene = preload("res://scenes/Bullet.tscn")
 
 const SLOT_OFFSETS = {
     "H": Vector2(0, -16),
@@ -39,6 +40,14 @@ func _physics_process(delta):
     if input_vector.length() > 0:
         input_vector = input_vector.normalized()
     move_and_slide(input_vector * speed)
+    if Input.is_action_just_pressed("shoot"):
+        shoot()
+
+func shoot():
+    var bullet = BulletScene.instance()
+    bullet.position = global_position
+    bullet.direction = (get_global_mouse_position() - global_position).normalized()
+    get_parent().add_child(bullet)
 
 func _create_texture(color: Color):
     var img = Image.new()
