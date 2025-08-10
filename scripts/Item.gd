@@ -2,6 +2,8 @@ extends Area2D
 
 export(String) var slot := "W"
 export(Color) var color := Color(1, 1, 1)
+var drop_time := 0
+const PICKUP_DELAY := 5.0
 
 func _ready():
     var sprite = Sprite.new()
@@ -23,9 +25,10 @@ func _ready():
     connect("body_entered", self, "_on_body_entered")
 
 func _on_body_entered(body):
-    if body.has_method("equip_item"):
-        body.equip_item(self)
-        queue_free()
+    if OS.get_ticks_msec() - drop_time < int(PICKUP_DELAY * 1000):
+        return
+    if body.has_method("pickup_item"):
+        body.pickup_item(self)
 
 func _create_texture(color: Color):
     var img = Image.new()

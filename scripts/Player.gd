@@ -11,7 +11,13 @@ const SLOT_OFFSETS = {
     "W": Vector2(16, 0)
 }
 
-var equipment := {}
+const SLOT_CAPACITY := 5
+const BACKPACK_CAPACITY := 5
+
+var equipment_sprites := {}
+var equipped_items := {}
+var inventory := {}
+var backpack := []
 
 func _ready():
     for slot in SLOT_OFFSETS.keys():
@@ -20,17 +26,83 @@ func _ready():
         sprite.position = SLOT_OFFSETS[slot]
         sprite.centered = true
         add_child(sprite)
-        equipment[slot] = sprite
+        equipment_sprites[slot] = sprite
+        equipped_items[slot] = null
+        inventory[slot] = []
     var collision = CollisionShape2D.new()
     var shape = RectangleShape2D.new()
     shape.extents = Vector2(8, 8)
     collision.shape = shape
     add_child(collision)
 
-func equip_item(item):
-    var slot = item.slot
-    if equipment.has(slot):
-        equipment[slot].texture = _create_texture(item.color)
+func pickup_item(item):
+    var data = {"slot": item.slot, "color": item.color}
+    var slot = data.slot
+    if equipped_items[slot] == null:
+        _equip_data(data)
+        item.queue_free()
+    elif inventory[slot].size() < SLOT_CAPACITY:
+        inventory[slot].append(data)
+        item.queue_free()
+    elif backpack.size() < BACKPACK_CAPACITY:
+        backpack.append(data)
+        item.queue_free()
+
+func equip_from_inventory(slot, index):
+    if inventory.has(slot) and index >= 0 and index < inventory[slot].size():
+        var data = inventory[slot].remove(index)
+        if equipped_items[slot] != null:
+            _store_or_drop(equipped_items[slot])
+        _equip_data(data)
+
+func equip_from_backpack(index, slot):
+    if index >= 0 and index < backpack.size():
+        var data = backpack[index]
+        if data.slot == slot:
+            backpack.remove(index)
+            if equipped_items[slot] != null:
+                _store_or_drop(equipped_items[slot])
+            _equip_data(data)
+
+func drop_equipped(slot):
+    if equipped_items.has(slot) and equipped_items[slot] != null:
+        var data = equipped_items[slot]
+        equipped_items[slot] = null
+        equipment_sprites[slot].texture = _create_texture(Color(0.5, 0.5, 0.5))
+        _drop_data(data)
+
+func drop_from_inventory(slot, index):
+    if inventory.has(slot) and index >= 0 and index < inventory[slot].size():
+        var data = inventory[slot].remove(index)
+        _drop_data(data)
+
+func drop_from_backpack(index):
+    if index >= 0 and index < backpack.size():
+        var data = backpack.remove(index)
+        _drop_data(data)
+
+func _store_or_drop(data):
+    var slot = data.slot
+    if inventory[slot].size() < SLOT_CAPACITY:
+        inventory[slot].append(data)
+    elif backpack.size() < BACKPACK_CAPACITY:
+        backpack.append(data)
+    else:
+        _drop_data(data)
+
+func _equip_data(data):
+    var slot = data.slot
+    equipped_items[slot] = data
+    equipment_sprites[slot].texture = _create_texture(data.color)
+
+func _drop_data(data):
+    var scene = preload("res://scenes/Item.tscn")
+    var item = scene.instance()
+    item.slot = data.slot
+    item.color = data.color
+    item.drop_time = OS.get_ticks_msec()
+    item.position = global_position
+    get_parent().add_child(item)
 
 func _physics_process(delta):
     var input_vector = Vector2(
