@@ -1,0 +1,11 @@
+; Engine configuration file.
+; It's best to edit the project settings by opening the project in the editor.
+
+config_version=4
+
+[application]
+config/name="Codex Looter Shooter"
+run/main_scene="res://scenes/WorldMap.tscn"
+
+[rendering]
+quality/driver/driver_name="GLES2"
